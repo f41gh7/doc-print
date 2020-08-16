@@ -10,7 +10,7 @@
 
 first install it with command, you must have golang installed at your system
 ```bash
-go install github.com/f41gh7/doc-print
+go get -u github.com/f41gh7/doc-print
 ```
 
  create some go file with struct:
