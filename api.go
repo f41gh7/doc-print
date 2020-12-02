@@ -39,6 +39,7 @@ var (
 		"v1.PersistentVolumeClaimSpec": "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#persistentvolumeclaimspec-v1-core",
 		"v1.PodSecurityContext":        "https://v1-17.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#podsecuritycontext-v1-core",
 		"v1.DNSPolicy":                 "https://v1-17.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#pod-v1-core",
+                "v1.TopologySpreadConstraint": "https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/",
 	}
 
 	selfLinks = map[string]string{}
