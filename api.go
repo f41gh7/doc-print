@@ -7,6 +7,7 @@ import (
 	"go/doc"
 	"go/parser"
 	"go/token"
+	"html"
 	"reflect"
 	"strings"
 )
@@ -84,7 +85,7 @@ func printAPIDocs(paths []string,docOwner string) {
 			fmt.Println("| ----- | ----------- | ------ | -------- |")
 			fields := t[1:]
 			for _, f := range fields {
-				fmt.Println("|", f.Name, "|", f.Doc , "|", f.Type, "|", f.Mandatory, "|")
+				fmt.Println("|", f.Name, "|", html.EscapeString(f.Doc) , "|", f.Type, "|", f.Mandatory, "|")
 			}
 			fmt.Println("")
 			fmt.Println("[Back to TOC](#table-of-contents)")
