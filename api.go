@@ -23,24 +23,33 @@ This Document documents the types introduced by the %s to be consumed by users.
 
 var (
 	links = map[string]string{
-		"metav1.ObjectMeta":            "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#objectmeta-v1-meta",
-		"metav1.ListMeta":              "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#listmeta-v1-meta",
-		"metav1.LabelSelector":         "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#labelselector-v1-meta",
-		"v1.ResourceRequirements":      "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#resourcerequirements-v1-core",
-		"v1.LocalObjectReference":      "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#localobjectreference-v1-core",
-		"v1.SecretKeySelector":         "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#secretkeyselector-v1-core",
-		"v1.PersistentVolumeClaim":     "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#persistentvolumeclaim-v1-core",
-		"v1.EmptyDirVolumeSource":      "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#emptydirvolumesource-v1-core",
-		"v1.Volume":                    "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#volume-v1-core",
-		"v1.VolumeMount":               "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#volumemount-v1-core",
-		"v1.Affinity":                  "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#affinity-v1-core",
-		"v1.Toleration":                "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#toleration-v1-core",
-		"v1.Container":                 "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#container-v1-core",
-		"v1.EnvVar":                    "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#envvar-v1-core",
-		"v1.PersistentVolumeClaimSpec": "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#persistentvolumeclaimspec-v1-core",
-		"v1.PodSecurityContext":        "https://v1-17.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#podsecuritycontext-v1-core",
-		"v1.DNSPolicy":                 "https://v1-17.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#pod-v1-core",
-                "v1.TopologySpreadConstraint": "https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/",
+		"metav1.ObjectMeta":                    "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#objectmeta-v1-meta",
+		"metav1.ListMeta":                      "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#listmeta-v1-meta",
+		"metav1.LabelSelector":                 "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#labelselector-v1-meta",
+		"v1.ResourceRequirements":              "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#resourcerequirements-v1-core",
+		"v1.LocalObjectReference":              "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#localobjectreference-v1-core",
+		"v1.SecretKeySelector":                 "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#secretkeyselector-v1-core",
+		"v1.PersistentVolumeClaim":             "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#persistentvolumeclaim-v1-core",
+		"v1.EmptyDirVolumeSource":              "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#emptydirvolumesource-v1-core",
+		"v1.Volume":                            "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volume-v1-core",
+		"v1.VolumeMount":                       "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core",
+		"v1.Affinity":                          "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#affinity-v1-core",
+		"v1.Toleration":                        "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#toleration-v1-core",
+		"v1.Container":                         "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#container-v1-core",
+		"v1.EnvVar":                            "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core",
+		"v1.PersistentVolumeClaimSpec":         "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#persistentvolumeclaimspec-v1-core",
+		"v1.PodSecurityContext":                "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#podsecuritycontext-v1-core",
+		"v1.DNSPolicy":                         "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#pod-v1-core",
+		"v1.TopologySpreadConstraint":          "https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/",
+		"appsv1.StatefulSetUpdateStrategyType": "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#statefulsetupdatestrategy-v1-apps",
+		"v1.PersistentVolumeClaimStatus":       "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#persistentvolumeclaimstatus-v1-core",
+		"v1.PullPolicy":                        "https://kubernetes.io/docs/concepts/containers/images#updating-images",
+		"*appsv1.DeploymentStrategyType":       "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#deploymentstrategy-v1-apps",
+		"appsv1.DeploymentStrategyType":        "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#deploymentstrategy-v1-apps",
+		"*appsv1.RollingUpdateDeployment":      "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#rollingupdatedeployment-v1-apps",
+		"appsv1.RollingUpdateDeployment":       "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#rollingupdatedeployment-v1-apps",
+		"v12.IngressRule":                      "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#ingressrule-v1-networking-k8s-io",
+		"v12.IngressTLS":                       "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#ingresstls-v1-networking-k8s-io",
 	}
 
 	selfLinks = map[string]string{}
@@ -62,8 +71,8 @@ func printTOC(types []KubeTypes) {
 	}
 }
 
-func printAPIDocs(paths []string,docOwner string) {
-	fmt.Println(fmt.Sprintf(firstParagraph,docOwner))
+func printAPIDocs(paths []string, docOwner string) {
+	fmt.Println(fmt.Sprintf(firstParagraph, docOwner))
 
 	types := ParseDocumentationFrom(paths)
 	for _, t := range types {
@@ -85,7 +94,7 @@ func printAPIDocs(paths []string,docOwner string) {
 			fmt.Println("| ----- | ----------- | ------ | -------- |")
 			fields := t[1:]
 			for _, f := range fields {
-				fmt.Println("|", f.Name, "|", html.EscapeString(f.Doc) , "|", f.Type, "|", f.Mandatory, "|")
+				fmt.Println("|", f.Name, "|", html.EscapeString(f.Doc), "|", f.Type, "|", f.Mandatory, "|")
 			}
 			fmt.Println("")
 			fmt.Println("[Back to TOC](#table-of-contents)")
