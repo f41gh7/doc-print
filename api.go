@@ -52,7 +52,13 @@ var (
 		"v12.IngressTLS":                       "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#ingresstls-v1-networking-k8s-io",
 	}
 
-	selfLinks = map[string]string{}
+	selfLinks              = map[string]string{}
+	structsByName          = map[string][]Pair{}
+	wellKnownExternalPairs = map[string][]Pair{
+		"[v1.LocalObjectReference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#localobjectreference-v1-core)": []Pair{
+			{Name: "name", Doc: "name", Type: "string", Mandatory: true},
+		},
+	}
 )
 
 func toSectionLink(name string) string {
@@ -74,38 +80,69 @@ func printTOC(types []KubeTypes) {
 func printAPIDocs(paths []string, docOwner string) {
 	fmt.Println(fmt.Sprintf(firstParagraph, docOwner))
 
-	types := ParseDocumentationFrom(paths)
+	types := ParseDocumentationFrom(paths, true)
 	for _, t := range types {
-		strukt := t[0]
-		selfLinks[strukt.Name] = "#" + strings.ToLower(strukt.Name)
+		st := t[0]
+		link := fmt.Sprintf("#%s", strings.ToLower(st.Name))
+		selfLinks[st.Name] = link
 	}
 
 	// we need to parse once more to now add the self links
-	types = ParseDocumentationFrom(paths)
-
+	types = ParseDocumentationFrom(paths, false)
 	printTOC(types)
+	for _, t := range types {
+		st := t[0]
+		// update self link and references for inlined structs
+		link := fmt.Sprintf("#%s", strings.ToLower(st.Name))
+		selfLinks[st.Name] = link
+		wr := wrapInLink(st.Name, link)
+		structsByName[wr] = t
+		structsByName[st.Name] = t
+	}
 
 	for _, t := range types {
-		strukt := t[0]
+		st := t[0]
 		if len(t) > 1 {
-			fmt.Printf("\n## %s\n\n%s\n\n", strukt.Name, strukt.Doc)
+			fmt.Printf("\n## %s\n\n%s\n\n", st.Name, st.Doc)
 
 			fmt.Println("| Field | Description | Scheme | Required |")
 			fmt.Println("| ----- | ----------- | ------ | -------- |")
 			fields := t[1:]
-			for _, f := range fields {
-				fmt.Println("|", f.Name, "|", html.EscapeString(f.Doc), "|", f.Type, "|", f.Mandatory, "|")
-			}
+			printPairs(fields)
 			fmt.Println("")
 			fmt.Println("[Back to TOC](#table-of-contents)")
 		}
 	}
 }
 
-// Pair of strings. We keed the name of fields and the doc
+func printPairs(fields []Pair) {
+	for _, f := range fields {
+		if f.EmbedLink != nil {
+			// special case
+			if *f.EmbedLink == "metav1.TypeMeta" {
+				continue
+			}
+			emb, ok := structsByName[*f.EmbedLink]
+			if !ok {
+				if known, ok := wellKnownExternalPairs[*f.EmbedLink]; ok {
+					emb = known
+				} else {
+					panic(fmt.Sprintf("possible bug, link: %s not found at exist and well known pairs", *f.EmbedLink))
+				}
+			}
+			printPairs(emb[1:])
+		} else {
+			fmt.Println("|", f.Name, "|", html.EscapeString(f.Doc), "|", f.Type, "|", f.Mandatory, "|")
+		}
+
+	}
+}
+
+// Pair of strings. We need the name of fields and the doc
 type Pair struct {
 	Name, Doc, Type string
 	Mandatory       bool
+	EmbedLink       *string
 }
 
 // KubeTypes is an array to represent all available types in a parsed file. [0] is for the type itself
@@ -115,7 +152,7 @@ type KubeTypes []Pair
 // array. Each type is again represented as an array (we have to use arrays as we
 // need to be sure for the order of the fields). This function returns fields and
 // struct definitions that have no documentation as {name, ""}.
-func ParseDocumentationFrom(srcs []string) []KubeTypes {
+func ParseDocumentationFrom(srcs []string, mustRegisterEmbed bool) []KubeTypes {
 	var docForTypes []KubeTypes
 
 	for _, src := range srcs {
@@ -124,14 +161,20 @@ func ParseDocumentationFrom(srcs []string) []KubeTypes {
 		for _, kubType := range pkg.Types {
 			if structType, ok := kubType.Decl.Specs[0].(*ast.TypeSpec).Type.(*ast.StructType); ok {
 				var ks KubeTypes
-				ks = append(ks, Pair{kubType.Name, fmtRawDoc(kubType.Doc), "", false})
+				ks = append(ks, Pair{kubType.Name, fmtRawDoc(kubType.Doc), "", false, nil})
 
 				for _, field := range structType.Fields.List {
 					typeString := fieldType(field.Type)
 					fieldMandatory := fieldRequired(field)
+					// handle inlined structs
+					if isInline(field) {
+						typeString = strings.TrimPrefix(typeString, "*")
+						ks = append(ks, Pair{"", "", "", false, &typeString})
+						continue
+					}
 					if n := fieldName(field); n != "-" {
 						fieldDoc := fmtRawDoc(field.Doc.Text())
-						ks = append(ks, Pair{n, fieldDoc, typeString, fieldMandatory})
+						ks = append(ks, Pair{n, fieldDoc, typeString, fieldMandatory, nil})
 					}
 				}
 				docForTypes = append(docForTypes, ks)
@@ -223,7 +266,8 @@ func fieldName(field *ast.Field) string {
 	jsonTag := ""
 	if field.Tag != nil {
 		jsonTag = reflect.StructTag(field.Tag.Value[1 : len(field.Tag.Value)-1]).Get("json") // Delete first and last quotation
-		if strings.Contains(jsonTag, "inline") {
+		// skip json field
+		if strings.HasPrefix(jsonTag, "-") {
 			return "-"
 		}
 	}
@@ -244,6 +288,17 @@ func fieldRequired(field *ast.Field) bool {
 	if field.Tag != nil {
 		jsonTag = reflect.StructTag(field.Tag.Value[1 : len(field.Tag.Value)-1]).Get("json") // Delete first and last quotation
 		return !strings.Contains(jsonTag, "omitempty")
+	}
+
+	return false
+}
+
+// isInline checks if struct inlined with json inline.
+func isInline(field *ast.Field) bool {
+	jsonTag := ""
+	if field.Tag != nil {
+		jsonTag = reflect.StructTag(field.Tag.Value[1 : len(field.Tag.Value)-1]).Get("json") // Delete first and last quotation
+		return strings.HasPrefix(jsonTag, ",inline")
 	}
 
 	return false
