@@ -50,6 +50,8 @@ var (
 		"appsv1.RollingUpdateDeployment":       "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#rollingupdatedeployment-v1-apps",
 		"v12.IngressRule":                      "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#ingressrule-v1-networking-k8s-io",
 		"v12.IngressTLS":                       "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#ingresstls-v1-networking-k8s-io",
+		"*v1.Probe":                            "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#probe-v1-core",
+		"v1.Probe":                             "https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#probe-v1-core",
 	}
 
 	selfLinks              = map[string]string{}
